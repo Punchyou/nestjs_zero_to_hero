@@ -1,6 +1,12 @@
-import { Task } from './tasks.model';
+import { Task, TaskStatus } from './tasks.model';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 export declare class TasksService {
     private tasks;
     getAllTasks(): Task[];
-    createTask(title: string, description: string): Task;
+    getTaskWithFilter(filterDto: GetTasksFilterDto): Task[];
+    getTaskById(id: string): Task;
+    createTask(createTaskDto: CreateTaskDto): Task;
+    deleteTask(id: string): void;
+    updateTask(id: string, status: TaskStatus): Task;
 }
