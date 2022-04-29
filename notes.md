@@ -17,6 +17,10 @@ $ yarn global add @nestjs/cli
 ```
 * Install [postman](https://www.postman.com/downloads/)
 
+### DB Requirements
+* [Docker](https://www.docker.com/products/docker-desktop/) to run Postgress
+* [pgAdmin](https://www.pgadmin.org/download/) as a GUI for the DB
+
 #### Libs:
 `uuid`:
 
@@ -25,6 +29,9 @@ $ yarn add uuid
 ```
 ```shell
 $ yarn add class-validator class-transformer
+```
+```shell
+$ yarn add typeorm @nestjs/typeorm pg
 ```
 ### App Structure
 ![img.png](images/img.png)
@@ -157,7 +164,45 @@ Pipe structure
 ![img.png](images/img0.png)
 
 
+## Docker and Postgres
+Run a postgres docker container:
+```shell
+$ docker run --name postfres-nest -p 5432:5432 -e POSTGRES_PASSWORD=postgres -d postgres
+```
+Check if it woeks
+```shell
+$ docker container ls
+```
+Stop the container:
+```shell
+$ docker container stop postgres-nest
+```
+Remove it at the end:
+```shell
+dicker container rm postgres-nest
+```
+
+## Object Relational Mapping
+
+* Querty and  manipulate data from a db, using OOP
+* Data model in one place, Easy to maintain
+* No sql
+* Database abstraction - change types
+* Performance might be tricky
+* TypeORM is the lib
+
+
+## [Active record vs Data Mapper](https://github.com/typeorm/typeorm/blob/master/docs/active-record-data-mapper.md)
+* Active record - define inside the module itseld and interact with the actual model. Keeps things simple for small apps, but can get messy
+* Data mapper - dump way, not much of functionality. Uses repositories, but code is mich cleaner at the end.
+
+We'll use data mapper.
+
 ### Notes
 > `3000` is the standard port for the node applications - makes our nextjs server up and running
-
 > `eslint` is the linter that we're using
+> `5432` is the standard port for postgress
+
+### Troubleshooting
+Known errors - probably because of the wrong `typeorm` version. To be resolved.
+![img_1.png](images/app_str.png)
