@@ -23,11 +23,11 @@ $ yarn global add @nestjs/cli
 ```shell
 $ yarn add uuid
 ```
+```shell
+$ yarn add class-validator class-transformer
+```
 ### App Structure
 ![img.png](images/img.png)
-
-### Endpoints
-![img_1.png](images/img_1.png)
 
 ## Get Started
 ```shell
@@ -36,6 +36,7 @@ $ nest -v nestjs-task-mamagement
 and the choose `yarn`
 
 This will create the project structure that looks like this
+
 ![img_2.png](images/img_2.png)
 
 * `json` files are configuration files
@@ -120,13 +121,41 @@ That how all above work together
 ## Data Transfer Objects (DTO)
 * In order to not change impoementations in different places, we can use DTO so we can changes things like types from a single place. DTO defined how data will be transfered over a network.
 * Don't have any behavios. only serialization or deserialization
-* Is not a model, only defines the shape of data, can be as simple as ![img_14.png](images/img_14.png)
+* Is not a model, only defines the shape of data, can be as simple as
+
+* ![img_14.png](images/img_14.png)
 * Can be defined with interfaces or classes (better classes as they allow more and wil be preserved on runtime).
 * Can be used throughout a project
 * Useful to validate data too
 
 #### Example
 ![img_13.png](images/img_13.png)
+
+
+## NestJS Pipes
+* Operate on the args to be processed by the route handler
+* Perform data transformation/validation
+* Return data
+* Throw expeptions
+* can be async
+* Annotated with @Injectable
+* Must implement `PipeTransform` generic interface - must have a `transform()`. params is `value` and `metadata` (optional)
+
+![img.png](images/img12.png)
+
+#### Examples
+Handler level
+![img_3.png](images/img1233.png)
+
+Parameter Level
+![img_4.png](images/img12344.png)
+
+Global Level
+![img_5.png](images/img545.png)
+
+Pipe structure
+![img.png](images/img0.png)
+
 
 ### Notes
 > `3000` is the standard port for the node applications - makes our nextjs server up and running
