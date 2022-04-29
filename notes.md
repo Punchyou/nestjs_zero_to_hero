@@ -199,9 +199,9 @@ dicker container rm postgres-nest
 We'll use data mapper.
 
 ### Notes
-> `3000` is the standard port for the node applications - makes our nextjs server up and running
-> `eslint` is the linter that we're using
-> `5432` is the standard port for postgress
+* > `3000` is the standard port for the node applications - makes our nextjs server up and running
+* > `eslint` is the linter that we're using
+* > `5432` is the standard port for postgress
 
 ### Troubleshooting
 Known errors - probably because of the wrong `typeorm` version. To be resolved.
