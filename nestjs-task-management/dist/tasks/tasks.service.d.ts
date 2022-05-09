@@ -1,12 +1,9 @@
-import { Task, TaskStatus } from './tasks.model';
 import { CreateTaskDto } from './dto/create-task.dto';
-import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
+import { TasksRepository } from './task.respository';
+import { Task } from './task.entity';
 export declare class TasksService {
-    private tasks;
-    getAllTasks(): Task[];
-    getTaskWithFilter(filterDto: GetTasksFilterDto): Task[];
-    getTaskById(id: string): Task;
-    createTask(createTaskDto: CreateTaskDto): Task;
-    deleteTask(id: string): void;
-    updateTask(id: string, status: TaskStatus): Task;
+    private tasksRepository;
+    constructor(tasksRepository: TasksRepository);
+    getTaskById(id: string): Promise<Task>;
+    createTask(createTaskDto: CreateTaskDto): Promise<Task>;
 }

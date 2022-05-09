@@ -9,10 +9,11 @@ import {
   Post,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
-import { Task, TaskStatus } from './tasks.model';
+import { TaskStatus } from './tasks-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
+import { Task } from './task.entity';
 
 // expose GET methof under 'tasks'
 @Controller('tasks')
@@ -21,33 +22,34 @@ export class TasksController {
 
   // this will be called whenever a GET request comes in
   // not nessarily has to have the same name as the in the tasks module
-  @Get()
-  getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
-    // if have any filter, call gettaskswillfilters -> we'll know this from the query param
-    // else get all
-    if (Object.keys(filterDto).length) {
-      return this.tasksService.getTaskWithFilter(filterDto);
-    } else {
-      return this.tasksService.getAllTasks();
-    }
-  }
+  // @Get()
+  // getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
+  //   // if have any filter, call gettaskswillfilters -> we'll know this from the query param
+  //   // else get all
+  //   if (Object.keys(filterDto).length) {
+  //     return this.tasksService.getTaskWithFilter(filterDto);
+  //   } else {
+  //     return this.tasksService.getAllTasks();
+  //   }
+  // }
 
-  @Get('/:id') //@params coresponds to whatever follows the ':'
-  getTaskById(@Param('id') id: string): Task {
+  @Get('/:id')
+  getTaskById(@Param('id') id: string): Promise<Task> {
     return this.tasksService.getTaskById(id);
   }
+
   // user POST to create an instance of our resource
   // since this is POST, need to make sure we won't have whatever in out response back - we specificly
   //define parameters title and desription and we decorate them
 
   // @Body will take the body and assign it to the 'body' param
   @Post()
-  createTask(@Body() createTaskDto: CreateTaskDto): Task {
+  createTask(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
     return this.tasksService.createTask(createTaskDto);
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id') id: string): void {
+  deleteTask(@Param('id') id: string): Promise<void> {
     return this.tasksService.deleteTask(id);
   }
 
@@ -55,7 +57,7 @@ export class TasksController {
   updateTask(
     @Param('id') id: string,
     @Body() UpdateTaskStatusDto: UpdateTaskStatusDto,
-  ): Task {
+  ): Promise<Task> {
     const { status } = UpdateTaskStatusDto;
     return this.tasksService.updateTask(id, status);
   }

@@ -13,7 +13,7 @@ $ brew install yarn
 
 * Install `nestjs` cli
 ```
-$ yarn global add @nestjs/cli
+$ yarn global add @nestjs/cli   
 ```
 * Install [postman](https://www.postman.com/downloads/)
 

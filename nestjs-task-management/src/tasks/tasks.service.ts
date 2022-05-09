@@ -1,73 +1,78 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Task, TaskStatus } from './tasks.model';
-import { v4 as uuid } from 'uuid';
+import { TaskStatus } from './tasks-status.enum';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { GetTasksFilterDto } from './dto/get-tasks-filter.dto';
 import { NotFoundError } from 'rxjs';
+import { TasksRepository } from './task.respository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Task } from './task.entity';
+import { TasksModule } from './tasks.module';
 
 @Injectable()
 export class TasksService {
-  private tasks: Task[] = []; // array of Task tasks
+  constructor(
+    @InjectRepository(TasksRepository)
+    private tasksRepository: TasksRepository,
+  ) {}
+
+  getTasks(filterDto: GetTasksFilterDto): Promise<Task[]> {
+    return this.tasksRepository.getTasks(filterDto);
+  }
+  // private tasks: Task[] = []; // array of Task tasks
   // could have return the using a public tasks,
   // but want to limit errors potenatially happening
   // to changes to a public var that can be changes
   // everywhere throughout the project
-  getAllTasks(): Task[] {
-    return this.tasks;
-  } // returns array of Task tasks
+  // getAllTasks(): Task[] {
+  //   return this.tasks;
+  // } // returns array of Task tasks
+  // getTaskWithFilter(filterDto: GetasksFilterDto): Task[] {
+  //   const { status, search } = filterDto;
+  //   let tasks = this.getAllTasks(); // keep the result in array
+  //   // do smthing with status
+  //   if (status) {
+  //     tasks = tasks.filter((task) => task.status === status);
+  //   }
+  //   if (search) {
+  //     tasks = tasks.filter((task) => {
+  //       if (task.title.includes(search) || task.description.includes(search)) {
+  //         return true;
+  //       }
+  //       return false;
+  //     });
+  //     // return result
+  //   }
+  //   return tasks;
+  // }
 
-  getTaskWithFilter(filterDto: GetTasksFilterDto): Task[] {
-    const { status, search } = filterDto;
-
-    let tasks = this.getAllTasks(); // keep the result in array
-    // do smthing with status
-    if (status) {
-      tasks = tasks.filter((task) => task.status === status);
-    }
-    if (search) {
-      tasks = tasks.filter((task) => {
-        if (task.title.includes(search) || task.description.includes(search)) {
-          return true;
-        }
-        return false;
-      });
-      // return result
-    }
-    return tasks;
-  }
-
-  getTaskById(id: string): Task {
-    const found = this.tasks.find((task) => task.id == id);
+  async getTaskById(id: string): Promise<Task> {
+    // async - always when interacting with DBs
+    // needs the use of promises
+    const found = await this.tasksRepository.findOne(id);
 
     if (!found) {
-      throw new NotFoundException(`Task with ID "${id}" not found`);
+      throw new NotFoundException(`Task with ID "$(id)" not found`);
     }
     return found;
   }
 
-  createTask(createTaskDto: CreateTaskDto): Task {
-    const { title, description } = createTaskDto;
-
-    const task: Task = {
-      id: uuid(),
-      title,
-      description,
-      status: TaskStatus.OPEN,
-    };
-
-    this.tasks.push(task);
-
-    return task;
+  async createTask(createTaskDto: CreateTaskDto): Promise<Task> {
+    return this.tasksRepository.createTask(createTaskDto);
   }
 
-  deleteTask(id: string): void {
-    const found = this.getTaskById(id);
-    this.tasks = this.tasks.filter((task) => task.id !== id);
+  async deleteTask(id: string): Promise<void> {
+    const result = this.tasksRepository.delete(id);
+    console.log(result);
+
+    if ((await result).affected === 0) {
+      throw new NotFoundException(`Task with "${id}" not found`);
+    }
   }
 
-  updateTask(id: string, status: TaskStatus): Task {
-    const task = this.getTaskById(id);
+  async updateTask(id: string, status: TaskStatus): Promise<Task> {
+    const task = await this.getTaskById(id);
     task.status = status;
+    await this.tasksRepository.save(id);
     return task;
   }
 }
